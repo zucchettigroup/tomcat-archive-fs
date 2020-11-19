@@ -41,7 +41,7 @@ public class FileServer
 		
 		Undertow server = Undertow.builder()
 				.addHttpListener(config.getServicePort(), config.getServiceHost())
-				.setHandler(addSecurity(resource, identityManager, null))
+				.setHandler(addSecurity(resource, identityManager, config.requireAuthentication()))
 				.build();
 		server.start();
 		
@@ -49,10 +49,10 @@ public class FileServer
 		System.out.println(config);
 	}
 	
-	private static HttpHandler addSecurity(HttpHandler toWrap, IdentityManager identityManager, Config config) 
+	private static HttpHandler addSecurity(HttpHandler toWrap, IdentityManager identityManager, boolean requireAuthentication) 
 	{
 		HttpHandler handler = toWrap;
-		if (config.requireAuthentication()) 
+		if (requireAuthentication) 
 		{
 			handler = new AuthenticationCallHandler(handler);
 			handler = new AuthenticationConstraintHandler(handler);
