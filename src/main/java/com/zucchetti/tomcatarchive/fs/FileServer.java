@@ -41,7 +41,7 @@ public class FileServer
 		
 		Undertow server = Undertow.builder()
 				.addHttpListener(config.getServicePort(), config.getServiceHost())
-				.setHandler(addSecurity(resource, identityManager))
+				.setHandler(addSecurity(resource, identityManager, null))
 				.build();
 		server.start();
 		
@@ -49,15 +49,19 @@ public class FileServer
 		System.out.println(config);
 	}
 	
-	private static HttpHandler addSecurity(HttpHandler toWrap, IdentityManager identityManager) 
+	private static HttpHandler addSecurity(HttpHandler toWrap, IdentityManager identityManager, Config config) 
 	{
 		HttpHandler handler = toWrap;
-		handler = new AuthenticationCallHandler(handler);
-		handler = new AuthenticationConstraintHandler(handler);
-		BasicAuthenticationMechanism authenticationMechanism = new BasicAuthenticationMechanism(REALM_NAME);
-		List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(authenticationMechanism);
-		handler = new AuthenticationMechanismsHandler(handler, mechanisms);
-		handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
+		if (config.requireAuthentication()) 
+		{
+			handler = new AuthenticationCallHandler(handler);
+			handler = new AuthenticationConstraintHandler(handler);
+			BasicAuthenticationMechanism authenticationMechanism = new BasicAuthenticationMechanism(REALM_NAME);
+			List<AuthenticationMechanism> mechanisms = Collections
+					.<AuthenticationMechanism>singletonList(authenticationMechanism);
+			handler = new AuthenticationMechanismsHandler(handler, mechanisms);
+			handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
+		}
 		return handler;
 	}
 }

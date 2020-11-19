@@ -14,6 +14,7 @@ public class Config
 	private final Path pwdFilePath;
 	private final Path dirToBrowsePath;
 	private final int transfertMinSize;
+	private final boolean publicAccess;
 
 	@Generated("SparkTools")
 	private Config(Builder builder) {
@@ -22,8 +23,16 @@ public class Config
 		this.pwdFilePath = builder.pwdFilePath;
 		this.dirToBrowsePath = builder.dirToBrowsePath;
 		this.transfertMinSize = builder.transfertMinSize;
+		this.publicAccess = builder.publicAccess;
 	}
 
+	public boolean allowPublicAccess() {
+		return publicAccess;
+	}
+	public boolean requireAuthentication()
+	{
+		return !allowPublicAccess();
+	}
 	public int getTransfertMinSize() {
 		return transfertMinSize;
 	}
@@ -39,6 +48,18 @@ public class Config
 	public Path getDirToBrowsePath() {
 		return dirToBrowsePath.toAbsolutePath();
 	}
+	@Override
+	public String toString() 
+	{
+		ToStringBuilder toString = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
+		toString.append("serviceHost", serviceHost);
+		toString.append("servicePort", servicePort);
+		toString.append("pwdFilePath", getPwdFilePath());
+		toString.append("dirToBrowsePath", getDirToBrowsePath());
+		toString.append("transfertMinSize", transfertMinSize);
+		return toString.toString();
+	}
+
 	/**
 	 * Creates builder to build {@link Config}.
 	 * @return created builder
@@ -65,7 +86,11 @@ public class Config
 	}
 	@Generated("SparkTools")
 	public interface ITransfertMinSizeStage {
-		public IBuildStage transfertMinSize(int transfertMinSize);
+		public IPublicAccessStage transfertMinSize(int transfertMinSize);
+	}
+	@Generated("SparkTools")
+	public interface IPublicAccessStage {
+		public IBuildStage publicAccess(boolean publicAccess);
 	}
 	@Generated("SparkTools")
 	public interface IBuildStage {
@@ -76,12 +101,13 @@ public class Config
 	 */
 	@Generated("SparkTools")
 	public static final class Builder implements IServiceHostStage, IServicePortStage, IPwdFilePathStage,
-	IDirToBrowsePathStage, ITransfertMinSizeStage, IBuildStage {
+			IDirToBrowsePathStage, ITransfertMinSizeStage, IPublicAccessStage, IBuildStage {
 		private String serviceHost;
 		private int servicePort;
 		private Path pwdFilePath;
 		private Path dirToBrowsePath;
 		private int transfertMinSize;
+		private boolean publicAccess;
 
 		private Builder() {
 		}
@@ -111,8 +137,14 @@ public class Config
 		}
 
 		@Override
-		public IBuildStage transfertMinSize(int transfertMinSize) {
+		public IPublicAccessStage transfertMinSize(int transfertMinSize) {
 			this.transfertMinSize = transfertMinSize;
+			return this;
+		}
+
+		@Override
+		public IBuildStage publicAccess(boolean publicAccess) {
+			this.publicAccess = publicAccess;
 			return this;
 		}
 
@@ -120,17 +152,5 @@ public class Config
 		public Config build() {
 			return new Config(this);
 		}
-	}
-	
-	@Override
-	public String toString() 
-	{
-		ToStringBuilder toString = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
-		toString.append("serviceHost", serviceHost);
-		toString.append("servicePort", servicePort);
-		toString.append("pwdFilePath", getPwdFilePath());
-		toString.append("dirToBrowsePath", getDirToBrowsePath());
-		toString.append("transfertMinSize", transfertMinSize);
-		return toString.toString();
 	}	
 }

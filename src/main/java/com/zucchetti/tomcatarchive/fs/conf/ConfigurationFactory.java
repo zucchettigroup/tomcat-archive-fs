@@ -18,6 +18,7 @@ public class ConfigurationFactory
 				// @see io.undertow.server.handlers.resource.PathResource.serveImpl:
 				// task = manager.getTransferMinSize() > Files.size(file) || range ? new ServerTask() : new TransferTask();
 				.transfertMinSize(envConfig.getInt("CONF_FS_TRANSFER_MIN_SIZE", 1024))
+				.publicAccess(envConfig.getBoolean("CONF_FS_PUBLIC_ACCESS", false))
 				.build();
 	}
 }
