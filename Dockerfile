@@ -8,7 +8,7 @@ RUN mvn -Duser.home=/var/maven -DskipTests -Dfile.encoding=Cp1252 clean package
 RUN ls -lhrt /tmp/tomcat-archive/target
 RUN cp /tmp/tomcat-archive/target/tomcat-archive-fs.jar /tmp/tomcat-archive
 RUN ls -lhrt /tmp/tomcat-archive
-VOLUME ["/tmp/tomcat-archive/logs", "/tmp/tomcat-archive/conf"]
+VOLUME ["/tmp/tomcat-archive/archive", "/tmp/tomcat-archive/conf"]
 EXPOSE 8080
 ENTRYPOINT []
 CMD ["java","-jar","tomcat-archive-fs.jar"]
